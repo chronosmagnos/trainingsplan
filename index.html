@@ -1,0 +1,147 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light dark"><style>html{color-scheme:light}body{margin:0}</style><title>Trainingsplan Herbst</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+/* Layout: eine Spalte, Wochenblöcke, pro Tag eine Karte mit grossem Abhak-Feld rechts */
+:root{
+  --bg:#eef0ee; --card:#ffffff; --fg:#161a18; --muted:#667069; --line:#d9dedb;
+  --rest-bg:#e3edfb;--rest-line:#9db9e0;--rest-fg:#2a5ba8;--accent:#1d6b4f; --accent-fg:#ffffff; --today:#c8501f; --open:#a3361a; --done-bg:#e3eee8;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif; --f-body:"Barlow",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111513; --card:#1a201d; --fg:#e8ede9; --muted:#8e9a93; --line:#2b332f;
+  --accent:#4fbf93; --accent-fg:#0d1a14; --today:#f08a55; --open:#f07a5c; --done-bg:#16231d; --rest-bg:#142033; --rest-line:#2f4670; --rest-fg:#86adec; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111513; --card:#1a201d; --fg:#e8ede9; --muted:#8e9a93; --line:#2b332f;
+  --accent:#4fbf93; --accent-fg:#0d1a14; --today:#f08a55; --open:#f07a5c; --done-bg:#16231d; --rest-bg:#142033; --rest-line:#2f4670; --rest-fg:#86adec; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.35;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:560px;margin:0 auto}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 12px;border-bottom:1px solid var(--line)}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+h1{font:700 26px/1 var(--f-display);letter-spacing:.02em;text-transform:uppercase;margin:0}
+.count{font:600 18px var(--f-display);font-variant-numeric:tabular-nums;color:var(--muted)}
+.count b{color:var(--fg)}
+.bar{height:6px;background:var(--line);border-radius:3px;margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.jump{margin-top:10px;font:600 14px var(--f-body);color:var(--accent);background:none;border:0;padding:6px 0;cursor:pointer}
+h2{font:600 14px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:26px 0 10px}
+.day{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.day.today{border-color:var(--today);border-width:2px}
+.day.done{background:var(--done-bg)}
+.row{display:flex;align-items:center;gap:12px;padding:8px 8px 8px 14px}
+.info{flex:1;min-width:0;background:none;border:0;color:inherit;font:inherit;text-align:left;padding:6px 0;cursor:pointer;display:block}
+.date{font:700 24px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.date span{font-weight:600;color:var(--muted);margin-left:6px;font-size:18px}
+.meta{margin-top:5px;font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
+.tag{font:700 12px var(--f-display);letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:var(--line);color:var(--fg)}
+.today .tag.now{background:var(--today);color:#fff}
+.tag.open{background:transparent;color:var(--open);border:1px solid var(--open)}
+.chk{flex:none;width:56px;height:56px;border-radius:12px;border:2px solid var(--muted);background:transparent;color:transparent;cursor:pointer;display:grid;place-items:center}
+.chk svg{width:30px;height:30px}
+.done .chk{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+button:focus-visible{outline:3px solid var(--today);outline-offset:2px}
+.ex{display:none;margin:0;padding:0 14px 12px;list-style:none;border-top:1px solid var(--line)}
+.day.open .ex{display:block}
+.ex li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.ex li:last-child{border-bottom:0}
+.ex .n{min-width:0;overflow-wrap:anywhere}
+.ex small{display:block;color:var(--muted);font-size:13px}
+.ex .s{flex:none;font:700 18px var(--f-display);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.ex .s small{display:inline;font:600 18px var(--f-display);color:inherit}
+.hint{margin:10px 0 0;font-size:13px;color:var(--muted)}
+.foot{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+.reset{align-self:flex-start;font:500 14px var(--f-body);color:var(--muted);background:none;border:1px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+.reset.arm{color:#fff;background:var(--open);border-color:var(--open)}
+.done .date,.done .meta{opacity:.75}
+.day.rest{background:var(--rest-bg);border-color:var(--rest-line)}
+.day.rest.today{border-color:var(--today)}
+.rinfo{flex:1;padding:6px 0}
+.rest .date{color:var(--rest-fg)}
+.rest .date span{color:var(--rest-fg);opacity:.8}
+.tag.free{background:var(--rest-fg);color:var(--rest-bg)}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head><body><div class="wrap">
+<header>
+  <div class="top"><h1>Trainingsplan</h1><div class="count" id="count"></div></div>
+  <div class="bar"><i id="fill"></i></div>
+  <button class="jump" id="jump" type="button">Zum nächsten Training</button>
+</header>
+<main id="list"></main>
+<div class="foot">
+  <p class="hint">Bei jeder Übung gilt: Letzter Satz bis zum technischen Muskelversagen. Karte antippen zeigt die Übungen, das Feld rechts hakt den Tag ab.</p>
+  <button class="reset" id="reset" type="button">Alle Haken löschen</button>
+</div>
+</div>
+<script>
+const DAYS=[{"date":"2026-10-27","t":"Training 1","ex":[["Rücken","Enges Latziehen",4,"8–12"],["Rücken","Ziehen zwischen den Türmen",4,"10–15"],["Rücken","Breites Ziehen im Stehen",3,"10–15"],["Brust","Schrägbankdrücken (Smith)",4,"6–10"],["Brust","Brustdrücken",4,"8–12"],["Brust","Liegestütze (Finisher)",1,"Maximum"],["Waden","Wadenheben an Beinmaschine",5,"10–15"]]},{"date":"2026-10-28","t":"Training 2","ex":[["Trizeps","Trizepsdrücken mit Stange",4,"8–12"],["Trizeps","Trizepsdrücken am Kabel, sitzend",4,"10–12"],["Trizeps","Einarmiges Trizepsdrücken",3,"12–15"],["Hintere Schulter","Reverse Flys mit Kurzhanteln",3,"12–15"],["Hintere Schulter","Reverse Flys am Kabelzug",3,"12–20"],["Beinbizeps","Beinbeuger, sitzend",3,"8–12"],["Beinbizeps","Beinbeuger, liegend",3,"10–15"]]},{"date":"2026-10-30","t":"Training 3","ex":[["Schulter","Viking Press",4,"6–10"],["Schulter","Seitheben auf der Bank",4,"12–15"],["Schulter","Frontheben (optional, Finisher)",1,"12–20"],["Bizeps","Bizepscurls am Latzug/Kabel",3,"8–12"],["Bizeps","Bizepscurls am Doppelkabelzug",3,"10–15"],["Bizeps","Konzentrationscurls",2,"10–15"]]},{"date":"2026-10-31","t":"Training 4","ex":[["Beine","Kniebeugen an Smith-Maschine",4,"6–10"],["Beine","Kettlebell-Kniebeugen",4,"10–15"],["Beine","Beinstrecker",3,"12–15"],["Beine/Hüfte","Hip Extensions",3,"10–15"],["Nacken (deine Ausführung)","Dips",3,"8–12"],["Nacken","Nackenheben (Shrugs)",4,"10–15"]]},{"date":"2026-11-02","t":"Training 5","ex":[["Brust","Kabel-Flys",3,"10–15"],["Brust","Bankdrücken",4,"6–10"],["Rücken","Rudern Maschine (oben)",4,"8–12"],["Rücken","Kabelzug nach hinten",3,"8–12"],["Rücken","Hyperextensions",3,"12–15"],["Waden","Wadenheben, stehend",5,"10–20"]]},{"date":"2026-11-03","t":"Training 1","ex":[["Rücken","Enges Latziehen",4,"8–12"],["Rücken","Ziehen zwischen den Türmen",4,"10–15"],["Rücken","Breites Ziehen im Stehen",3,"10–15"],["Brust","Schrägbankdrücken (Smith)",4,"6–10"],["Brust","Brustdrücken",4,"8–12"],["Brust","Liegestütze (Finisher)",1,"Maximum"],["Waden","Wadenheben an Beinmaschine",5,"10–15"]]},{"date":"2026-11-05","t":"Training 2","ex":[["Trizeps","Trizepsdrücken mit Stange",4,"8–12"],["Trizeps","Trizepsdrücken am Kabel, sitzend",4,"10–12"],["Trizeps","Einarmiges Trizepsdrücken",3,"12–15"],["Hintere Schulter","Reverse Flys mit Kurzhanteln",3,"12–15"],["Hintere Schulter","Reverse Flys am Kabelzug",3,"12–20"],["Beinbizeps","Beinbeuger, sitzend",3,"8–12"],["Beinbizeps","Beinbeuger, liegend",3,"10–15"]]},{"date":"2026-11-06","t":"Training 3","ex":[["Schulter","Viking Press",4,"6–10"],["Schulter","Seitheben auf der Bank",4,"12–15"],["Schulter","Frontheben (optional, Finisher)",1,"12–20"],["Bizeps","Bizepscurls am Latzug/Kabel",3,"8–12"],["Bizeps","Bizepscurls am Doppelkabelzug",3,"10–15"],["Bizeps","Konzentrationscurls",2,"10–15"]]},{"date":"2026-11-08","t":"Training 4","ex":[["Beine","Kniebeugen an Smith-Maschine",4,"6–10"],["Beine","Kettlebell-Kniebeugen",4,"10–15"],["Beine","Beinstrecker",3,"12–15"],["Beine/Hüfte","Hip Extensions",3,"10–15"],["Nacken (deine Ausführung)","Dips",3,"8–12"],["Nacken","Nackenheben (Shrugs)",4,"10–15"]]},{"date":"2026-11-09","t":"Training 5","ex":[["Brust","Kabel-Flys",3,"10–15"],["Brust","Bankdrücken",4,"6–10"],["Rücken","Rudern Maschine (oben)",4,"8–12"],["Rücken","Kabelzug nach hinten",3,"8–12"],["Rücken","Hyperextensions",3,"12–15"],["Waden","Wadenheben, stehend",5,"10–20"]]},{"date":"2026-11-11","t":"Training 1","ex":[["Rücken","Enges Latziehen",4,"8–12"],["Rücken","Ziehen zwischen den Türmen",4,"10–15"],["Rücken","Breites Ziehen im Stehen",3,"10–15"],["Brust","Schrägbankdrücken (Smith)",4,"6–10"],["Brust","Brustdrücken",4,"8–12"],["Brust","Liegestütze (Finisher)",1,"Maximum"],["Waden","Wadenheben an Beinmaschine",5,"10–15"]]},{"date":"2026-11-12","t":"Training 2","ex":[["Trizeps","Trizepsdrücken mit Stange",4,"8–12"],["Trizeps","Trizepsdrücken am Kabel, sitzend",4,"10–12"],["Trizeps","Einarmiges Trizepsdrücken",3,"12–15"],["Hintere Schulter","Reverse Flys mit Kurzhanteln",3,"12–15"],["Hintere Schulter","Reverse Flys am Kabelzug",3,"12–20"],["Beinbizeps","Beinbeuger, sitzend",3,"8–12"],["Beinbizeps","Beinbeuger, liegend",3,"10–15"]]},{"date":"2026-11-14","t":"Training 3","ex":[["Schulter","Viking Press",4,"6–10"],["Schulter","Seitheben auf der Bank",4,"12–15"],["Schulter","Frontheben (optional, Finisher)",1,"12–20"],["Bizeps","Bizepscurls am Latzug/Kabel",3,"8–12"],["Bizeps","Bizepscurls am Doppelkabelzug",3,"10–15"],["Bizeps","Konzentrationscurls",2,"10–15"]]},{"date":"2026-11-15","t":"Training 4","ex":[["Beine","Kniebeugen an Smith-Maschine",4,"6–10"],["Beine","Kettlebell-Kniebeugen",4,"10–15"],["Beine","Beinstrecker",3,"12–15"],["Beine/Hüfte","Hip Extensions",3,"10–15"],["Nacken (deine Ausführung)","Dips",3,"8–12"],["Nacken","Nackenheben (Shrugs)",4,"10–15"]]},{"date":"2026-11-17","t":"Training 5","ex":[["Brust","Kabel-Flys",3,"10–15"],["Brust","Bankdrücken",4,"6–10"],["Rücken","Rudern Maschine (oben)",4,"8–12"],["Rücken","Kabelzug nach hinten",3,"8–12"],["Rücken","Hyperextensions",3,"12–15"],["Waden","Wadenheben, stehend",5,"10–20"]]},{"date":"2026-11-18","t":"Training 1","ex":[["Rücken","Enges Latziehen",4,"8–12"],["Rücken","Ziehen zwischen den Türmen",4,"10–15"],["Rücken","Breites Ziehen im Stehen",3,"10–15"],["Brust","Schrägbankdrücken (Smith)",4,"6–10"],["Brust","Brustdrücken",4,"8–12"],["Brust","Liegestütze (Finisher)",1,"Maximum"],["Waden","Wadenheben an Beinmaschine",5,"10–15"]]},{"date":"2026-11-20","t":"Training 2","ex":[["Trizeps","Trizepsdrücken mit Stange",4,"8–12"],["Trizeps","Trizepsdrücken am Kabel, sitzend",4,"10–12"],["Trizeps","Einarmiges Trizepsdrücken",3,"12–15"],["Hintere Schulter","Reverse Flys mit Kurzhanteln",3,"12–15"],["Hintere Schulter","Reverse Flys am Kabelzug",3,"12–20"],["Beinbizeps","Beinbeuger, sitzend",3,"8–12"],["Beinbizeps","Beinbeuger, liegend",3,"10–15"]]},{"date":"2026-11-21","t":"Training 3","ex":[["Schulter","Viking Press",4,"6–10"],["Schulter","Seitheben auf der Bank",4,"12–15"],["Schulter","Frontheben (optional, Finisher)",1,"12–20"],["Bizeps","Bizepscurls am Latzug/Kabel",3,"8–12"],["Bizeps","Bizepscurls am Doppelkabelzug",3,"10–15"],["Bizeps","Konzentrationscurls",2,"10–15"]]},{"date":"2026-11-23","t":"Training 4","ex":[["Beine","Kniebeugen an Smith-Maschine",4,"6–10"],["Beine","Kettlebell-Kniebeugen",4,"10–15"],["Beine","Beinstrecker",3,"12–15"],["Beine/Hüfte","Hip Extensions",3,"10–15"],["Nacken (deine Ausführung)","Dips",3,"8–12"],["Nacken","Nackenheben (Shrugs)",4,"10–15"]]},{"date":"2026-11-24","t":"Training 5","ex":[["Brust","Kabel-Flys",3,"10–15"],["Brust","Bankdrücken",4,"6–10"],["Rücken","Rudern Maschine (oben)",4,"8–12"],["Rücken","Kabelzug nach hinten",3,"8–12"],["Rücken","Hyperextensions",3,"12–15"],["Waden","Wadenheben, stehend",5,"10–20"]]},{"date":"2026-11-26","t":"Training 1","ex":[["Rücken","Enges Latziehen",4,"8–12"],["Rücken","Ziehen zwischen den Türmen",4,"10–15"],["Rücken","Breites Ziehen im Stehen",3,"10–15"],["Brust","Schrägbankdrücken (Smith)",4,"6–10"],["Brust","Brustdrücken",4,"8–12"],["Brust","Liegestütze (Finisher)",1,"Maximum"],["Waden","Wadenheben an Beinmaschine",5,"10–15"]]},{"date":"2026-11-27","t":"Training 2","ex":[["Trizeps","Trizepsdrücken mit Stange",4,"8–12"],["Trizeps","Trizepsdrücken am Kabel, sitzend",4,"10–12"],["Trizeps","Einarmiges Trizepsdrücken",3,"12–15"],["Hintere Schulter","Reverse Flys mit Kurzhanteln",3,"12–15"],["Hintere Schulter","Reverse Flys am Kabelzug",3,"12–20"],["Beinbizeps","Beinbeuger, sitzend",3,"8–12"],["Beinbizeps","Beinbeuger, liegend",3,"10–15"]]},{"date":"2026-11-29","t":"Training 3","ex":[["Schulter","Viking Press",4,"6–10"],["Schulter","Seitheben auf der Bank",4,"12–15"],["Schulter","Frontheben (optional, Finisher)",1,"12–20"],["Bizeps","Bizepscurls am Latzug/Kabel",3,"8–12"],["Bizeps","Bizepscurls am Doppelkabelzug",3,"10–15"],["Bizeps","Konzentrationscurls",2,"10–15"]]},{"date":"2026-11-30","t":"Training 4","ex":[["Beine","Kniebeugen an Smith-Maschine",4,"6–10"],["Beine","Kettlebell-Kniebeugen",4,"10–15"],["Beine","Beinstrecker",3,"12–15"],["Beine/Hüfte","Hip Extensions",3,"10–15"],["Nacken (deine Ausführung)","Dips",3,"8–12"],["Nacken","Nackenheben (Shrugs)",4,"10–15"]]}];
+const KEY="trainingsplan-2026-herbst";
+let done={};
+try{done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){done={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const parse=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const fmt=(d,o)=>d.toLocaleDateString("de-CH",o);
+const todayIso=()=>iso(new Date());
+const monday=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const list=document.getElementById("list");
+function build(){
+  let html="",wk="";
+  const byDate={};DAYS.forEach(d=>byDate[d.date]=d);
+  const last=parse(DAYS[DAYS.length-1].date);
+  for(let dt=parse(DAYS[0].date);dt<=last;dt=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1)){
+    const m=monday(dt),k=iso(m),d=byDate[iso(dt)];
+    if(k!==wk){wk=k;const e=new Date(m);e.setDate(e.getDate()+6);
+      html+=`<h2>${fmt(m,{day:"2-digit",month:"2-digit"})} – ${fmt(e,{day:"2-digit",month:"2-digit"})}</h2>`}
+    if(!d){html+=`<section class="day rest" data-d="${iso(dt)}"><div class="row"><div class="rinfo"><div class="date">${fmt(dt,{day:"2-digit",month:"2-digit"})}<span>${fmt(dt,{weekday:"long"})}</span></div>
+      <div class="meta"><span class="tag free">Frei</span><span class="st"></span></div></div></div></section>`;continue}
+    const ex=d.ex.map(x=>`<li><div class="n">${x[1]}<small>${x[0]}</small></div><div class="s">${x[2]} × <small>${x[3]}</small></div></li>`).join("");
+    html+=`<section class="day" data-d="${d.date}"><div class="row">
+      <button class="info" type="button" aria-expanded="false"><div class="date">${fmt(dt,{day:"2-digit",month:"2-digit"})}<span>${fmt(dt,{weekday:"long"})}</span></div>
+      <div class="meta"><span class="tag">${d.t}</span><span>${d.ex.length} Übungen</span><span class="st"></span></div></button>
+      <button class="chk" type="button" aria-label="${d.t} am ${fmt(dt,{day:"2-digit",month:"2-digit"})} abhaken">${CHECK}</button></div>
+      <ul class="ex">${ex}</ul></section>`}
+  list.innerHTML=html;
+}
+function refresh(){
+  const t=todayIso();let n=0;
+  list.querySelectorAll(".day").forEach(el=>{
+    const d=el.dataset.d;
+    if(el.classList.contains("rest")){el.classList.toggle("today",d===t);el.querySelector(".st").innerHTML=d===t?'<span class="tag now">Heute</span>':"";return}
+    const ok=!!done[d];if(ok)n++;
+    el.classList.toggle("done",ok);el.classList.toggle("today",d===t);
+    el.querySelector(".chk").setAttribute("aria-pressed",ok);
+    const st=el.querySelector(".st");
+    st.innerHTML=ok?"":d===t?'<span class="tag now">Heute</span>':d<t?'<span class="tag open">Offen</span>':"";
+  });
+  document.getElementById("count").innerHTML=`<b>${n}</b> von ${DAYS.length}`;
+  document.getElementById("fill").style.width=(n/DAYS.length*100)+"%";
+}
+function nextEl(){
+  const t=todayIso();
+  const open=DAYS.filter(d=>!done[d.date]);
+  const pick=open.find(d=>d.date>=t)||open[0]||DAYS[DAYS.length-1];
+  return list.querySelector(`[data-d="${pick.date}"]`);
+}
+function jump(){const el=nextEl();if(el){const h=document.querySelector("header").offsetHeight+8;
+  window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-h,behavior:"smooth"})}}
+list.addEventListener("click",e=>{
+  const day=e.target.closest(".day");if(!day)return;
+  if(e.target.closest(".chk")){const d=day.dataset.d;if(done[d])delete done[d];else done[d]=1;save();refresh();return}
+  if(e.target.closest(".info")){const o=day.classList.toggle("open");day.querySelector(".info").setAttribute("aria-expanded",o)}
+});
+document.getElementById("jump").onclick=jump;
+const rb=document.getElementById("reset");let armT;
+rb.onclick=()=>{
+  if(rb.classList.contains("arm")){done={};save();refresh();rb.classList.remove("arm");rb.textContent="Alle Haken löschen";clearTimeout(armT)}
+  else{rb.classList.add("arm");rb.textContent="Nochmal tippen zum Löschen";armT=setTimeout(()=>{rb.classList.remove("arm");rb.textContent="Alle Haken löschen"},4000)}
+};
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
+build();refresh();
+const first=nextEl();if(first){first.classList.add("open");setTimeout(jump,50)}
+</script>
+</body></html>
